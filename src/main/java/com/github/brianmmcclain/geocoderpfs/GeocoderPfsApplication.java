@@ -34,44 +34,6 @@ public class GeocoderPfsApplication {
 	public Function<String, String> geocode() {
 		return eventJson -> {
 
-			// Set environment properties
-			System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
-			System.setProperty("java.net.preferIPv4Stack", "true");
-			System.setProperty("javax.net.debug", "all");
-
-			try {
-			// Ensure we can connect to the Maps API
-			String url = "https://maps.google.com";
-		
-			URL obj = new URL(url);
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-			// optional default is GET
-			con.setRequestMethod("GET");
-
-			int responseCode = con.getResponseCode();
-			System.out.println("\nSending 'GET' request to URL : " + url);
-			System.out.println("Response Code : " + responseCode);
-
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-
-			//print result
-			System.out.println(response.toString());
-			} catch (Exception e) {
-				String ret = "Could not connect to Maps API: " + e.getMessage();
-				System.out.println(ret);
-				e.printStackTrace(System.out);
-				return ret;
-			}
-
 			// Parse environment variables
 			String dbHostEnv = System.getenv("PGHOST");
 			String dbPortEnv = System.getenv("PGPORT");
@@ -129,8 +91,9 @@ public class GeocoderPfsApplication {
 			// Parse timestamp
 			Timestamp timestamp;
 			try {
-				//2018-12-06T15:39:26.928+0000
-				SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+				//Dec 6, 2018 11:30:17 PM
+				//4 Jul 2001 12:08:56 -0700
+				SimpleDateFormat timeFormat = new SimpleDateFormat("MMM d, yyyy HH:mm:ss aa");
 				Date parsedDate = timeFormat.parse(time);
 				timestamp = new Timestamp(parsedDate.getTime());
 			} catch (ParseException e) {
