@@ -36,7 +36,7 @@ public class GeocoderPfsApplication {
 
 			try {
 			// Ensure we can connect to the Maps API
-			String url = "http://www.google.com/search?q=mkyong";
+			String url = "https://maps.google.com";
 		
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
