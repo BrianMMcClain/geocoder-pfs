@@ -127,6 +127,8 @@ public class GeocoderPfsApplication {
 			return result[0].formattedAddress;
 		} catch (Exception e) {
 			System.out.println("Error geocoding coordinates: " + e.getMessage() + ": " + lat + "," + lon);
+			System.out.println(e.getClass().toString());
+			System.out.println(e.getStackTrace().toString());
 			return null;
 		}
 		
