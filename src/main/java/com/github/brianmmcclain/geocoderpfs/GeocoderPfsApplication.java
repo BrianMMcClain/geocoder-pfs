@@ -67,6 +67,7 @@ public class GeocoderPfsApplication {
 			} catch (Exception e) {
 				String ret = "Could not connect to Maps API: " + e.getMessage();
 				System.out.println(ret);
+				e.printStackTrace(System.out);
 				return ret;
 			}
 
