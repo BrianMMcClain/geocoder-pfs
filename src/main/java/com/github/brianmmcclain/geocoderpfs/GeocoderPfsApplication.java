@@ -34,6 +34,10 @@ public class GeocoderPfsApplication {
 	public Function<String, String> geocode() {
 		return eventJson -> {
 
+			// Set environment properties
+			System.setProperty("https.protocols", "TLSv1.2");
+			System.setProperty("java.net.preferIPv4Stack", "true");
+
 			try {
 			// Ensure we can connect to the Maps API
 			String url = "https://maps.google.com";
