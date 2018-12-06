@@ -81,7 +81,7 @@ public class GeocoderPfsApplication {
 
 			// Parse event JSON
 			Gson gson = new Gson();
-			Map<String, String> event = gson.fromJson(eventJson, Map.class);
+			Map<String, String> event = gson.fromJson(eventJson.toString(), Map.class);
 			String id = event.get("id");
 			String time = event.get("timestamp");
 			Double lat = Double.parseDouble(event.get("lat"));
