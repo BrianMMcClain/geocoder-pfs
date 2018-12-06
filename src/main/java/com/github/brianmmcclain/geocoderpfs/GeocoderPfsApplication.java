@@ -14,6 +14,10 @@ import java.util.Properties;
 import java.util.function.Function;
 
 import com.google.gson.Gson;
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.LatLng;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -32,6 +36,7 @@ public class GeocoderPfsApplication {
 			String dbDatabaseEnv = System.getenv("PGDATABASE");
 			String dbUserEnv = System.getenv("PGUSER");
 			String dbPasswordEnv = System.getenv("PGPASSWORD");
+			String googleAPIKey = System.getenv("GOOGLE_API_KEY");
 
 			// Process defaults of environment variable isn't defined
 			String dbHost = (dbHostEnv == null) ? "localhost" : dbHostEnv;
@@ -75,11 +80,10 @@ public class GeocoderPfsApplication {
 			Map<String, String> event = gson.fromJson(eventJson, Map.class);
 			String id = event.get("id");
 			String time = event.get("timestamp");
-			String lat = event.get("lat");
-			String lon = event.get("long");
-			String mag = event.get("mag");
-			String address = "TBD";
-			
+			Double lat = Double.parseDouble(event.get("lat"));
+			Double lon = Double.parseDouble(event.get("long"));
+			Double mag = Double.parseDouble(event.get("mag"));
+
 			// Parse timestamp
 			Timestamp timestamp;
 			try {
@@ -92,14 +96,17 @@ public class GeocoderPfsApplication {
 				return "Could not parse event: " + e.getMessage();
 			}
 
+			// Reverse geocode coordinates
+			String address = reverseGeocode(lat, lon, googleAPIKey);
+
 			// Write event to database
 			try {
 				PreparedStatement insertStatement = conn.prepareStatement("INSERT INTO events VALUES (?, ?, ?, ?, ?, ?)");
 				insertStatement.setString(1, id);
 				insertStatement.setTimestamp(2, timestamp);
-				insertStatement.setDouble(3, Double.parseDouble(lat));
-				insertStatement.setDouble(4, Double.parseDouble(lon));
-				insertStatement.setDouble(5, Double.parseDouble(mag));
+				insertStatement.setDouble(3, lat);
+				insertStatement.setDouble(4, lon);
+				insertStatement.setDouble(5, mag);
 				insertStatement.setString(6, address);
 				insertStatement.execute();
 				insertStatement.close();
@@ -110,6 +117,19 @@ public class GeocoderPfsApplication {
 
 			return "Event " + id + " Recorded";
 		};
+	}
+
+	private static String reverseGeocode(double lat, double lon, String apiKey) {
+		try {
+			GeoApiContext context = new GeoApiContext.Builder().apiKey(apiKey).build();
+			LatLng location = new LatLng(lat, lon);
+			GeocodingResult[] result = GeocodingApi.reverseGeocode(context, location).await();
+			return result[0].formattedAddress;
+		} catch (Exception e) {
+			System.out.println("Error geocoding coordinates: " + e.getMessage() + ": " + lat + "," + lon);
+			return null;
+		}
+		
 	}
 
 	public static void main(String[] args) {
