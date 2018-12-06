@@ -35,7 +35,7 @@ public class GeocoderPfsApplication {
 		return eventJson -> {
 
 			// Set environment properties
-			System.setProperty("https.protocols", "TLSv1.2");
+			System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
 			System.setProperty("java.net.preferIPv4Stack", "true");
 
 			try {
