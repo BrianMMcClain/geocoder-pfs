@@ -37,6 +37,7 @@ public class GeocoderPfsApplication {
 			// Set environment properties
 			System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
 			System.setProperty("java.net.preferIPv4Stack", "true");
+			System.setProperty("javax.net.debug", "all");
 
 			try {
 			// Ensure we can connect to the Maps API
