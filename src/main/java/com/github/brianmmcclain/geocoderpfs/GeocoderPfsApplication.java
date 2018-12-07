@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
@@ -81,19 +82,18 @@ public class GeocoderPfsApplication {
 
 			// Parse event JSON
 			Gson gson = new Gson();
-			Map<String, String> event = gson.fromJson(eventJson.toString(), Map.class);
-			String id = event.get("id");
-			String time = event.get("timestamp");
-			Double lat = Double.parseDouble(event.get("lat"));
-			Double lon = Double.parseDouble(event.get("long"));
-			Double mag = Double.parseDouble(event.get("mag"));
+			Map<String, Object> event = new HashMap<String, Object>();
+			event = gson.fromJson(eventJson.toString(), event.getClass());
+			String id = event.get("id").toString();
+			String time = event.get("time").toString();
+			Double lat = Double.parseDouble(event.get("lat").toString());
+			Double lon = Double.parseDouble(event.get("long").toString());
+			Double mag = Double.parseDouble(event.get("mag").toString());
 
 			// Parse timestamp
 			Timestamp timestamp;
 			try {
-				//Dec 6, 2018 11:30:17 PM
-				//4 Jul 2001 12:08:56 -0700
-				SimpleDateFormat timeFormat = new SimpleDateFormat("MMM d, yyyy HH:mm:ss aa");
+				SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 				Date parsedDate = timeFormat.parse(time);
 				timestamp = new Timestamp(parsedDate.getTime());
 			} catch (ParseException e) {
