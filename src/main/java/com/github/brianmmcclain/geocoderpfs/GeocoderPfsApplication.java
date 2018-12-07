@@ -138,7 +138,7 @@ public class GeocoderPfsApplication {
 			System.out.println("Error geocoding coordinates: " + e.getMessage() + ": " + lat + "," + lon);
 			System.out.println(e.getClass().toString());
 			System.out.println(e.getStackTrace().toString());
-			return null;
+			return "Unknown Address(" + lat + "," + lon + ")";
 		}
 		
 	}
