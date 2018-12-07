@@ -129,7 +129,11 @@ public class GeocoderPfsApplication {
 			GeoApiContext context = new GeoApiContext.Builder().apiKey(apiKey).build();
 			LatLng location = new LatLng(lat, lon);
 			GeocodingResult[] result = GeocodingApi.reverseGeocode(context, location).await();
-			return result[0].formattedAddress;
+			String address = result[0].formattedAddress;
+			if (address.isEmpty()) {
+				address = "Unknown Address(" + lat + "," + lon + ")";
+			}
+			return address;
 		} catch (Exception e) {
 			System.out.println("Error geocoding coordinates: " + e.getMessage() + ": " + lat + "," + lon);
 			System.out.println(e.getClass().toString());
