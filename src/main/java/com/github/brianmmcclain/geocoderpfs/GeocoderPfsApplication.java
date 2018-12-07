@@ -130,7 +130,7 @@ public class GeocoderPfsApplication {
 			LatLng location = new LatLng(lat, lon);
 			GeocodingResult[] result = GeocodingApi.reverseGeocode(context, location).await();
 			String address = result[0].formattedAddress;
-			if (address.isEmpty()) {
+			if (address == null || address.isEmpty()) {
 				address = "Unknown Address(" + lat + "," + lon + ")";
 			}
 			return address;
